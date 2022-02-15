@@ -1,13 +1,9 @@
 import graphene
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
-from django.db.models import Q
-from django.utils import timezone
+
 from graphene import relay
 from graphene_django import DjangoObjectType
-from django.contrib.auth import authenticate
 from graphene_django.filter import DjangoFilterConnectionField
-from graphql_jwt.shortcuts import get_token
 
 import blog.views
 from blog.models import User, Profile, Blog, Tag, Post, Comment
@@ -17,7 +13,7 @@ import graphql_jwt
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        # fields = ("id", "name", "ingredients")
+        # fields = ("id", "name")
 
 
 class ProfileType(DjangoObjectType):
@@ -73,8 +69,8 @@ class Query(graphene.ObjectType):
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
     blogs = graphene.List(BlogType)
-    posts = graphene.List(PostType)
-    # posts = DjangoFilterConnectionField(PostNode)
+    # posts = graphene.List(PostType)
+    posts = DjangoFilterConnectionField(PostNode)
     tags = graphene.List(TagType)
     tag_by_name = graphene.List(TagType, name=graphene.String(required=True))
 
