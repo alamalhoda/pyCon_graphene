@@ -155,15 +155,19 @@ class GraphqlTestCase(GraphQLTestCase):
             '''
             {
               posts {
-                title
+                edges {
+                  node {
+                    id
+                    title
+                  }
+                }
               }
             }
             ''')
         content = json.loads(response.content)
-        content = json.loads(response.content)
-        posts = content['data']['posts']
-
-        self.assertEqual(len(posts), 2)
+        post_nodes = content['data']['posts']['edges']
+        self.assertEqual(post_nodes[0]['node']['title'], 'my first post')
+        self.assertEqual(len(post_nodes), 2)
 
     def test_posts_ali(self):
         """ دریافت همه پست ها با کاربر علی. """
@@ -172,7 +176,12 @@ class GraphqlTestCase(GraphQLTestCase):
             '''
             {
               posts {
-                title
+                edges {
+                  node {
+                    id
+                    title
+                  }
+                }
               }
             }
             ''',
@@ -182,10 +191,10 @@ class GraphqlTestCase(GraphQLTestCase):
             }
         )
         content = json.loads(response.content)
-        content = json.loads(response.content)
-        posts = content['data']['posts']
+        post_nodes = content['data']['posts']['edges']
 
-        self.assertEqual(len(posts), 3)
+        self.assertEqual(post_nodes[2]['node']['title'], 'django private post')
+        self.assertEqual(len(post_nodes), 3)
 
     def test_create_post(self):
         token = self.take_token()
